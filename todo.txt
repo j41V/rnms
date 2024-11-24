@@ -1,0 +1,5 @@
+-finish cli.rs
+	-finish usage
+	-fix no arguments
+-add threading
+*add further scripts
