@@ -36,12 +36,30 @@ fn main() {
         ports = DEFAULT_PORTS.into();
     }
     
-    let open_ports = scanner::scan_host(target_ip, ports);
+    let open_ports = scanner::scan_host(target_ip.clone(), ports);
     
-    cli::print_results(open_ports);
+    cli::print_results(open_ports.clone());
+
+    //dbg!(script_api::run_script("src/scripts/test.py".to_string()));
     
     //let script_result = script_api::run_script(String::from("src/scripts/test.py"));
     //println!("{}", script_result);
     //println!("{}", port_recon::get_port_info(80))
+    //if use_default_scripts {
+    //        let script_result = script_api::run_script("src/scripts/http.py".to_string());
+    //        
+    //        return format!("{port_name} | {script_result}")
+    //    };
+    
+    println!("Running default scripts");
+    
+    if use_default_script {
+        for port in open_ports {
+            cli::print_scan_status(port);
+            let script_result = script_api::run_script("src/scripts/default_scripts.py".to_string(), target_ip.clone(), port);
+            
+            println!("| {port} | {script_result} |             ");
+        }
+    }
 }
 

@@ -66,6 +66,6 @@ pub  fn print_results(open_ports: Vec<u16>) {
     println!("found {} open ports              ", open_ports.len());
     for open_port in open_ports {
         let open_port_string = format!("{}", open_port);
-        println!("| {} | {} |",open_port, port_recon::get_port_info(open_port));
+        println!("| {} | {} |",open_port, port_recon::get_port_description(open_port));
     }
 }

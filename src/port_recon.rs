@@ -1,3 +1,5 @@
+use crate::script_api;
+
     fn basic_port_matching(port: u16) -> String {
         
     match port {
@@ -6406,6 +6408,8 @@
         //"test".to_string()
     }
     
-pub fn get_port_info(port: u16) -> String {
-        basic_port_matching(port)
+pub fn get_port_description(port: u16) -> String {
+        let port_name = basic_port_matching(port);
+        format!("{port_name}")
+        
 }
