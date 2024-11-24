@@ -8,9 +8,9 @@ class Http():
         
     def run(self):
         result = ""
-        http_req_header = ("GET / HTTP/1.1\r\nHost:"+ip+"\r\n\r\n").encode()
+        http_req_header = ("GET / HTTP/1.1\r\nHost:"+self.ip+"\r\n\r\n").encode()
         request_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        request_socket.connect((ip, int(port)))
+        request_socket.connect((self.ip, int(self.port)))
         request_socket.send(http_req_header)
         response = request_socket.recv(1024).decode()
         
@@ -21,7 +21,8 @@ class Http():
                 result = header_line.split(": ")[1]
                 #print("result: ", result)
         return result.strip()
-        
-ip, port = api.get_target()
-http = Http(ip, port)
-http.run()
+     
+if __name__ == "__main__":   
+    ip, port = api.get_target()
+    http = Http(ip, port)
+    print(http.run(), end="")

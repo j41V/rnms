@@ -9,10 +9,11 @@ class Example():
     def run(self):
         
         results = "whatever"
-        
-        print(results)
+        request_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        request_socket.connect((self.ip, int(self.port)))     
+        return results.strip()
         
         
 ip, port = api.get_target()
 example = Example(ip, port)
-example.run()
+print(example.run(), end="")

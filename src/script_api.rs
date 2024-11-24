@@ -10,8 +10,8 @@ pub fn run_script(path: String, target_ip: String, port: u16) -> String {
     //println!("status: {}", output.status);
     //println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
     //println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
-    dbg!(script_stderr);
-    dbg!(&script_stdout);
-    dbg!(script_status);
+    //dbg!(script_stderr);
+    //dbg!(&script_stdout);
+    //dbg!(script_status);
     script_stdout
 }
