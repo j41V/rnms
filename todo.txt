@@ -1,5 +1,9 @@
--finish cli.rs
-	-finish usage
-	-fix no arguments
--add threading
+-finish cli.rs | done
+	-finish usage | done
+	-fix no arguments | done
+-add threading | done
 *add further scripts
+-add install script | done
+	-move scripts to /usr/share
+	-move binary to /usr/bin
+-add socket timeout | done

@@ -6,6 +6,8 @@ mod script_api;
 // import libaries
 use std::{process, u16};
 
+use tokio::time::error::Error;
+
 // constants
 
 pub const DEFAULT_PORTS: &[u16] = &[
@@ -18,8 +20,8 @@ pub const DEFAULT_PORTS: &[u16] = &[
     3001, 5001, 82, 10010, 1030, 9090, 2107, 1024, 2103, 6004, 1801, 5050, 19, 8031, 1041, 255,
     // ...
 ];
-
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), Error> {
     let target_ip = cli::get_target_ip();
     let options = cli::get_options();
     let (needs_help, scan_all_ports, use_default_script) = options;
@@ -36,7 +38,7 @@ fn main() {
         ports = DEFAULT_PORTS.into();
     }
     
-    let open_ports = scanner::scan_host(target_ip.clone(), ports);
+    let open_ports = scanner::scan_host(target_ip.clone(), ports).await;
     
     cli::print_results(open_ports.clone());
 
@@ -51,9 +53,10 @@ fn main() {
     //        return format!("{port_name} | {script_result}")
     //    };
     
-    println!("Running default scripts");
+
     
     if use_default_script {
+        println!("Running default scripts");
         for port in open_ports {
             cli::print_scan_status(port);
             let script_result = script_api::run_script("src/scripts/default_scripts.py".to_string(), target_ip.clone(), port);
@@ -61,5 +64,6 @@ fn main() {
             println!("| {port} | {script_result} |             ");
         }
     }
+    Ok(())
 }
 

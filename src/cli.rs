@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, process};
 use std::io::{stdout, Write};
 
 use crate::port_recon;
@@ -12,7 +12,11 @@ OPTIONS:
 -ds/--defaultscripts | run default scripts after scan
 */
 
-pub const USAGE: &str = "rnms [OPTIONS] target_ip";
+pub const USAGE: &str = "rnms [OPTIONS] target_ip\n\nOPTIONS:\n-h/--help            | print usage screen\n-ap/ --allports      | scan all ports\n-ds/--defaultscripts | run default scripts after scan\n";
+
+pub fn print_usage() {
+    println!("{}", USAGE);
+}
 
 pub fn get_cli_arguments() -> Vec<String> {
     let argsuments: Vec<String> = env::args().collect();
@@ -53,6 +57,10 @@ pub fn get_options() -> (bool, bool, bool) {
 
 pub fn get_target_ip() -> String{
     let arguments = get_cli_arguments();
+    if arguments.len() == 1 {
+        print_usage();
+        process::exit(1);
+    }
     let target_ip = arguments.last().expect("Not enough arguments").to_owned();
     return target_ip
 }
