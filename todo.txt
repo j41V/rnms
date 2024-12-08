@@ -12,3 +12,4 @@
 -make results screen pretty | done
 
 -add timeout cli argument
+-make it faster
