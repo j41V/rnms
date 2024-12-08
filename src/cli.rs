@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::{env, process};
 use std::io::{stdout, Write};
 
@@ -70,10 +71,48 @@ pub fn print_scan_status(port: u16) {
     stdout().flush();
 }
 
-pub  fn print_results(open_ports: Vec<u16>) {
+pub  fn print_results(open_ports_hash_map: HashMap<u16, Vec<String>>) {
+    /*
     println!("found {} open ports              ", open_ports.len());
     for open_port in open_ports {
         let open_port_string = format!("{}", open_port);
         println!("| {} | {} |",open_port, port_recon::get_port_description(open_port));
     }
+    */
+    
+    let empty_string = "".to_string();
+    
+    let ports = open_ports_hash_map.keys();
+    for port in ports.clone() {
+        let port_vec = open_ports_hash_map.get(port).unwrap();
+        let port_name = port_vec[0].clone();
+        let script_result = port_vec[1].clone();
+        
+        let port_string: String = port.to_string();
+        let spaces_port = " ".repeat(5 - port_string.len());
+        let spaces_port_name = " ".repeat(15 - port_name.len());
+        let spaces_script_result = " ".repeat(45 - script_result.len());
+        if ports.clone().len() == 0 {
+            println!("Found no open ports");
+            process::exit(0);
+        }
+        
+        if port_name == empty_string && script_result == empty_string {
+            println!("| {}{spaces_port}|", port);  
+        } else if script_result == empty_string {
+            println!("| {}{spaces_port}| {}{spaces_port_name}|", port, port_name);
+        } else {
+            println!("| {port}{spaces_port}| {port_name}{spaces_port_name}| {script_result}{spaces_script_result}|");
+        }
+        
+    }
+}
+
+pub fn create_results_keymap(open_ports: Vec<u16>)-> HashMap<u16, Vec<String>> {
+    let mut results = std::collections::HashMap::new();
+    for port in open_ports {
+        let port_info = vec![port_recon::get_port_description(port.clone()), String::new()];
+        results.insert(port, port_info);
+    }
+    results
 }

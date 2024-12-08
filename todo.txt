@@ -7,3 +7,8 @@
 	-move scripts to /usr/share
 	-move binary to /usr/bin
 -add socket timeout | done
+-fix results | done
+	-maybe dump results in /tmp/ file and read out later
+-make results screen pretty | done
+
+-add timeout cli argument
