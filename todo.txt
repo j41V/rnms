@@ -11,5 +11,5 @@
 	-maybe dump results in /tmp/ file and read out later
 -make results screen pretty | done
 
--add timeout cli argument
--make it faster
+-add timeout cli argument | done
+-make it faster | done

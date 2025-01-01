@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::{env, process};
 use std::io::{stdout, Write};
+use std::time::Duration;
 
 use crate::port_recon;
 /*
@@ -11,9 +12,13 @@ OPTIONS:
 -h/--help            | print usage screen
 -ap/ --allports      | scan all ports
 -ds/--defaultscripts | run default scripts after scan
+-t1-4                | timeout speed: t4 fastest timeout, t1 slowest
+
+EXAMPLE:
+rnms -ap -ds -t4 scanme.org
 */
 
-pub const USAGE: &str = "rnms [OPTIONS] target_ip\n\nOPTIONS:\n-h/--help            | print usage screen\n-ap/ --allports      | scan all ports\n-ds/--defaultscripts | run default scripts after scan\n";
+pub const USAGE: &str = "rnms [OPTIONS] target_ip\n\nOPTIONS:\n-h/--help            | print usage screen\n-ap/ --allports      | scan all ports\n-ds/--defaultscripts | run default scripts after scan\n-t1-4                | timeout speed: t4 fastest timeout, t1 slowest\n\nEXAMPLE:\nrnms -ap -ds -t4 scanme.org";
 
 pub fn print_usage() {
     println!("{}", USAGE);
@@ -25,7 +30,7 @@ pub fn get_cli_arguments() -> Vec<String> {
     
 }
 
-pub fn get_options() -> (bool, bool, bool) {
+pub fn get_options() -> (bool, bool, bool, Duration) {
     let arguments = get_cli_arguments();
     // strings of options
     let help_short = "-h".to_string();
@@ -37,9 +42,18 @@ pub fn get_options() -> (bool, bool, bool) {
     let default_script_short = "-ds".to_string();
     let default_script = "--defaultscript".to_string();
     
+    let superfast_timout = "t4".to_string();
+    let fast_timeout = "t3".to_string();
+    let default_timeout = "t2".to_string();
+    let slow_timeout = "t1".to_string();
+    let superslow_timeout = "t0".to_string();
+    
     let mut is_help = false;
     let mut is_scan_all_ports = false;
     let mut use_default_script = false;
+    let mut timeout = Duration::from_secs_f32(1.0);
+    
+    
     
     for argument in arguments{
         if argument == help_short || argument == help {
@@ -51,9 +65,24 @@ pub fn get_options() -> (bool, bool, bool) {
         if argument == default_script || argument == default_script_short {
             use_default_script = true;
         }
+        if argument == superfast_timout {
+            timeout = Duration::from_secs_f32(0.1);
+        }
+        if argument == fast_timeout {
+            timeout = Duration::from_secs_f32(0.5);
+        }
+        if argument == default_timeout {
+            timeout = Duration::from_secs_f32(1.0);
+        }
+        if argument == slow_timeout {
+            timeout = Duration::from_secs_f32(1.5);
+        }
+        if argument == superslow_timeout {
+            timeout = Duration::from_secs_f32(2.0);
+        }
     };
     
-    return (is_help, is_scan_all_ports, use_default_script)
+    return (is_help, is_scan_all_ports, use_default_script, timeout)
 }
 
 pub fn get_target_ip() -> String{

@@ -26,7 +26,7 @@ pub const DEFAULT_PORTS: &[u16] = &[
 async fn main() -> Result<(), Error> {
     let target_ip = cli::get_target_ip();
     let options = cli::get_options();
-    let (needs_help, scan_all_ports, use_default_script) = options;
+    let (needs_help, scan_all_ports, use_default_script, timeout) = options;
     if needs_help {
         println!("{}", cli::USAGE);
         process::exit(1);
@@ -45,7 +45,7 @@ async fn main() -> Result<(), Error> {
     let tmp_file_name = format!("/tmp/rnms{}", duration_since_epoch.as_nanos());
     fs::File::create(tmp_file_name.clone()).expect("Error creating tmp file");
     
-    let open_ports = scanner::scan_host(target_ip.clone(), ports, tmp_file_name).await;
+    let open_ports = scanner::scan_host(target_ip.clone(), ports, tmp_file_name, timeout).await;
     
     let mut open_ports_hash_map = cli::create_results_keymap(open_ports.clone());
     //dbg!(open_ports_hash_map.keys());
@@ -68,7 +68,7 @@ async fn main() -> Result<(), Error> {
     if use_default_script {
         for port in open_ports.clone() {
             cli::print_scan_status(port);
-            let script_result = script_api::run_script("src/scripts/default_scripts.py".to_string(), target_ip.clone(), port);
+            let script_result = script_api::run_script("/usr/share/rnms/scripts/default_scripts.py".to_string(), target_ip.clone(), port);
             
             let original_value = open_ports_hash_map.get(&port).unwrap();
             let new_value = vec![original_value[0].clone(), script_result.clone()];
