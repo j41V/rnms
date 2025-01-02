@@ -8,6 +8,7 @@ use std::{process, u16};
 use std::fs;
 use std::time;
 
+use colored::Colorize;
 use tokio::time::error::Error;
 
 // constants
@@ -44,7 +45,7 @@ async fn main() -> Result<(), Error> {
     let duration_since_epoch = time::SystemTime::now().duration_since(time::SystemTime::UNIX_EPOCH).unwrap();
     let tmp_file_name = format!("/tmp/rnms{}", duration_since_epoch.as_nanos());
     fs::File::create(tmp_file_name.clone()).expect("Error creating tmp file");
-    
+    println!("{}v1.5", cli::LOGO.cyan());
     let open_ports = scanner::scan_host(target_ip.clone(), ports, tmp_file_name, timeout).await;
     
     let mut open_ports_hash_map = cli::create_results_keymap(open_ports.clone());
@@ -66,6 +67,7 @@ async fn main() -> Result<(), Error> {
 
     
     if use_default_script {
+        println!("{}", format!("[*]Running default scripts").yellow());
         for port in open_ports.clone() {
             cli::print_scan_status(port);
             let script_result = script_api::run_script("/usr/share/rnms/scripts/default_scripts.py".to_string(), target_ip.clone(), port);
@@ -80,9 +82,14 @@ async fn main() -> Result<(), Error> {
         
     //dbg!(open_ports_hash_map.clone());
     
+    
+    let closed_ports = usize::from(u16::MAX) - open_ports.len();
+    
+    println!("{}", format!("[*]Found {} open ports | {} closed ports", open_ports.len(), closed_ports).yellow());
+    
     cli::print_results(open_ports_hash_map.clone());
     if script_argument_given {
-        println!("Script results:");
+        println!("{}", format!("[*]Running custom script: {}", script_path.clone()).yellow());
         for port in open_ports.clone() {
             let script_result = script_api::run_script(script_path.clone(), target_ip.clone(), port);
             println!("| {} | {} |", port, script_result)

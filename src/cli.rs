@@ -4,6 +4,8 @@ use std::io::{stdout, Write};
 use std::time::Duration;
 use std::path::Path;
 
+use colored::Colorize;
+
 use crate::port_recon;
 /*
 
@@ -22,8 +24,21 @@ rnms -ap -ds -t4 scanme.org
 
 pub const USAGE: &str = "rnms [OPTIONS] target_ip\n\nOPTIONS:\n-h/--help            | print usage screen\n-ap/ --allports      | scan all ports\n-ds/--defaultscripts | run default scripts after scan\n-t1-4                | timeout speed: t4 fastest timeout, t1 slowest\n--script=SCRIPTPATH  | run custom script\n\nEXAMPLE:\nrnms -ap -ds -t4 scanme.org";
 
+pub const LOGO: &str = "░▒▓███████▓▒░░▒▓███████▓▒░░▒▓██████████████▓▒░ ░▒▓███████▓▒░ 
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
+░▒▓███████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓██████▓▒░  
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░ 
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░ 
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░";  
+                                                             
+                                                             
+
+
+
+
 pub fn print_usage() {
-    println!("{}", USAGE);
+    println!("{}", USAGE.red());
 }
 
 pub fn get_cli_arguments() -> Vec<String> {
@@ -110,7 +125,7 @@ pub fn get_target_ip() -> String{
 }
 
 pub fn print_scan_status(port: u16) {
-    print!("scanning port {}         \r", port);
+    print!("{}", format!("[*]Scanning port {}         \r", port).yellow());
     let _ = stdout().flush();
 }
 
