@@ -15,3 +15,8 @@
 -add script argument | done
 -add packages for debian, ubuntu and arch linux
 -add README.md | done
+-remake cli outputs
+-fix http script
+-add requirements.txt
+-add banner script
+-add https script
