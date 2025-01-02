@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::{env, process};
 use std::io::{stdout, Write};
 use std::time::Duration;
+use std::path::Path;
 
 use crate::port_recon;
 /*
@@ -13,12 +14,13 @@ OPTIONS:
 -ap/ --allports      | scan all ports
 -ds/--defaultscripts | run default scripts after scan
 -t1-4                | timeout speed: t4 fastest timeout, t1 slowest
+--script=SCRIPTPATH  | run custom script 
 
 EXAMPLE:
 rnms -ap -ds -t4 scanme.org
 */
 
-pub const USAGE: &str = "rnms [OPTIONS] target_ip\n\nOPTIONS:\n-h/--help            | print usage screen\n-ap/ --allports      | scan all ports\n-ds/--defaultscripts | run default scripts after scan\n-t1-4                | timeout speed: t4 fastest timeout, t1 slowest\n\nEXAMPLE:\nrnms -ap -ds -t4 scanme.org";
+pub const USAGE: &str = "rnms [OPTIONS] target_ip\n\nOPTIONS:\n-h/--help            | print usage screen\n-ap/ --allports      | scan all ports\n-ds/--defaultscripts | run default scripts after scan\n-t1-4                | timeout speed: t4 fastest timeout, t1 slowest\n--script=SCRIPTPATH  | run custom script\n\nEXAMPLE:\nrnms -ap -ds -t4 scanme.org";
 
 pub fn print_usage() {
     println!("{}", USAGE);
@@ -30,7 +32,7 @@ pub fn get_cli_arguments() -> Vec<String> {
     
 }
 
-pub fn get_options() -> (bool, bool, bool, Duration) {
+pub fn get_options() -> (bool, bool, bool, Duration, bool, String) {
     let arguments = get_cli_arguments();
     // strings of options
     let help_short = "-h".to_string();
@@ -48,11 +50,14 @@ pub fn get_options() -> (bool, bool, bool, Duration) {
     let slow_timeout = "t1".to_string();
     let superslow_timeout = "t0".to_string();
     
+    let script_path_argument = "--script=";
+    
     let mut is_help = false;
     let mut is_scan_all_ports = false;
     let mut use_default_script = false;
     let mut timeout = Duration::from_secs_f32(1.0);
-    
+    let mut script_path = String::new();
+    let mut script_argument_given = false;
     
     
     for argument in arguments{
@@ -80,9 +85,18 @@ pub fn get_options() -> (bool, bool, bool, Duration) {
         if argument == superslow_timeout {
             timeout = Duration::from_secs_f32(2.0);
         }
+        if argument.contains(script_path_argument) {
+            script_argument_given = true;
+            script_path = argument.strip_prefix(script_path_argument).unwrap().to_string();
+            //dbg!(script_path.clone());
+            if !check_if_file_exists(script_path.clone().as_str()) {
+                println!("Please enter valid script path");
+                process::exit(0);
+            }
+        }
     };
     
-    return (is_help, is_scan_all_ports, use_default_script, timeout)
+    return (is_help, is_scan_all_ports, use_default_script, timeout, script_argument_given, script_path)
 }
 
 pub fn get_target_ip() -> String{
@@ -97,7 +111,7 @@ pub fn get_target_ip() -> String{
 
 pub fn print_scan_status(port: u16) {
     print!("scanning port {}         \r", port);
-    stdout().flush();
+    let _ = stdout().flush();
 }
 
 pub  fn print_results(open_ports_hash_map: HashMap<u16, Vec<String>>) {
@@ -144,4 +158,7 @@ pub fn create_results_keymap(open_ports: Vec<u16>)-> HashMap<u16, Vec<String>> {
         results.insert(port, port_info);
     }
     results
+}
+pub fn check_if_file_exists(script_path: &str) -> bool {
+    Path::new(script_path).exists()
 }

@@ -26,7 +26,7 @@ pub const DEFAULT_PORTS: &[u16] = &[
 async fn main() -> Result<(), Error> {
     let target_ip = cli::get_target_ip();
     let options = cli::get_options();
-    let (needs_help, scan_all_ports, use_default_script, timeout) = options;
+    let (needs_help, scan_all_ports, use_default_script, timeout, script_argument_given, script_path) = options;
     if needs_help {
         println!("{}", cli::USAGE);
         process::exit(1);
@@ -77,10 +77,17 @@ async fn main() -> Result<(), Error> {
             //println!("| {port} | {script_result} |             ");
         }
     }
-    
+        
     //dbg!(open_ports_hash_map.clone());
     
     cli::print_results(open_ports_hash_map.clone());
+    if script_argument_given {
+        println!("Script results:");
+        for port in open_ports.clone() {
+            let script_result = script_api::run_script(script_path.clone(), target_ip.clone(), port);
+            println!("| {} | {} |", port, script_result)
+        }
+    }
     Ok(())
 }
 

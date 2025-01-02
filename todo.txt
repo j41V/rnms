@@ -10,6 +10,7 @@
 -fix results | done
 	-maybe dump results in /tmp/ file and read out later
 -make results screen pretty | done
-
 -add timeout cli argument | done
 -make it faster | done
+-add script argument | done
+-add packages for debian, ubuntu and arch linux
