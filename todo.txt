@@ -14,4 +14,4 @@
 -make it faster | done
 -add script argument | done
 -add packages for debian, ubuntu and arch linux
--add README.md
+-add README.md | done
