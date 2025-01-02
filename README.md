@@ -1,5 +1,5 @@
-### RNMS ###
+# RNMS #
 
-# Installation #
+### Installation ###
 run ./install.sh
 
